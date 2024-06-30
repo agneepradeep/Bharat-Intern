@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movieMedia</title>
+    <style>
+        body {
+            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .navbar {
+            overflow: hidden;
+            background-color: #343a40;
+            padding: 14px 16px;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-weight: lighter;
+            font-size: 25px;
+        }
+
+        .navbar h2 {
+            float:left;
+            color:rgb(255, 0, 0);
+            text-align: center;
+            padding: 14px 16px;
+            margin: 0px 0px;
+            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-weight:bolder;
+            text-decoration: none;
+            font-size: 25px;
+        }
+
+        .navbar a:hover {
+            background-color: #000000;
+            color: red;
+            text-decoration: none;
+            border-radius:5%;
+        }
+        .navbar a:focus{
+            color: red;
+            background-color: #343a40;
+        }
+        .container {
+            padding: 20px;
+        }
+        .movie-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            width: 500px;
+        }
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+        .movie-card img {
+            max-width: 50%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .cards-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        h2 {
+            text-align:center;
+            color: #343a40;
+        }
+        #search-bar {
+            text-align: center;
+            margin: 20px 0;
+        }
+        #search-bar input, #search-bar button {
+            padding: 10px;
+            margin: 5px;
+        }
+        #search-bar input[type="radio"] {
+            margin-left: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        function showTrending() {
+            document.getElementById('trending').classList.remove('hidden');
+            document.getElementById('search').classList.add('hidden');
+        }
+
+        function showSearch() {
+            document.getElementById('search').classList.remove('hidden');
+            document.getElementById('trending').classList.add('hidden');
+        }
+
+        function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function getRecommendations() {
+    let movie = document.getElementById('movie').value.trim();
+    movie = capitalizeFirstLetter(movie); // Capitalize the first letter
+    const filterType = document.querySelector('input[name="filter"]:checked').value;
+
+    fetch(`/recommend?movie=${encodeURIComponent(movie)}&filter_type=${filterType}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                const recommendationsList = document.getElementById('recommendations');
+                recommendationsList.innerHTML = '';
+                data.recommendations.forEach(rec => {
+                    const div = document.createElement('div');
+                    div.className = 'movie-card';
+                    div.innerHTML = `
+                        <img src="${rec.Poster}" alt="${rec.Title} poster">
+                        <h3>${rec.Title}</h3>
+                        <p>${rec.Plot}</p>
+                        <p><strong>IMDB Rating:</strong> ${rec.imdbRating}</p>
+                    `;
+                    recommendationsList.appendChild(div);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching recommendations. Please try again later.');
+        });
+}
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Movie Media</h2>
+        <a href="javascript:void(0);" onclick="showTrending()">Trending</a>
+        <a href="javascript:void(0);" onclick="showSearch()">Search</a>
+    </div>
+
+    <div class="container hidden" id="trending">
+        <h2>Top 15 Movies</h2>
+        <div class="cards-container" id="top-movies">
+            {% for movie in top_movies %}
+                <div class="movie-card">
+                    <img src="{{ movie.Poster }}" alt="{{ movie.Title }} poster">
+                    <h3>{{ movie.Title }}</h3>
+                    <p>{{ movie.Plot }}</p>
+                    <p><strong>IMDB Rating:</strong> {{ movie.imdbRating }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="container hidden" id="search">
+        <h2>Search Movie Recommendations</h2>
+        <div id="search-bar">
+            <input type="text" id="movie" placeholder="Enter movie name">
+            <div>
+                <input type="radio" id="plot" name="filter" value="plot" checked>
+                <label for="plot">Based on Plot</label>
+                <input type="radio" id="actors_directors" name="filter" value="actors_directors">
+                <label for="actors_directors">Based on Actor, Director & Keywords</label>
+            </div>
+            <button onclick="getRecommendations()">Search</button>
+        </div>
+        <h3>Recommended Movies:</h3>
+        <div class="cards-container" id="recommendations"></div>
+    </div>
+</body>
+</html>
