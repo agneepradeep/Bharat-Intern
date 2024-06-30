@@ -78,7 +78,7 @@ The movie recommendation system provides accurate and relevant suggestions based
 - TMDB Movie Metadata: [Dataset Link](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata/data)
 - Scikit-learn Documentation
 - Flask Documentation
-- [Getting Started with a Movie Recommendation System - IBTESAM AHMED](kaggle.com/code/ibtesama/getting-started-with-a-movie-recommendation-system)
+- [Getting Started with a Movie Recommendation System - IBTESAM AHMED](https://www.kaggle.com/code/ibtesama/getting-started-with-a-movie-recommendation-system)
 
 ## Appendix
 
