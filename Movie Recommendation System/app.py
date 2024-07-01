@@ -1,21 +1,19 @@
-from flask import Flask, request, render_template, jsonify
+import streamlit as st
+import pandas as pd
 import joblib
+import requests
 from dotenv import load_dotenv
 import os
-import pandas as pd
-import requests
 
+# Load environment variables
 load_dotenv()
-
-app = Flask(__name__)
+OMDB_API_KEY = os.getenv('API_Key')
 
 # Load the models and data
 cosine_sim = joblib.load('models/cosine_similarity_matrix_tfidf.joblib')
 cosine_sim2 = joblib.load('models/cosine_similarity_matrix_count.joblib')
 df2_cleaned = pd.read_csv('data/transformed_df2.csv')
 q_movies = pd.read_csv('data/top_movies.csv')
-
-OMDB_API_KEY = os.getenv('API_Key')
 
 # Ensure indices are preserved
 df2_cleaned = df2_cleaned.reset_index()
@@ -25,27 +23,15 @@ q_movies = q_movies.sort_values('score', ascending=False).head(15)  # Load top 1
 indices = pd.Series(df2_cleaned.index, index=df2_cleaned['title']).drop_duplicates()
 
 def get_recommendations(title, cosine_sim):
-    # Ensure the title is properly capitalized
     title = title.title()
-    
-    # Get the index of the movie that matches the title
     idx = indices.get(title, None)
     if idx is None:
         return []
 
-    # Get the pairwise similarity scores of all movies with that movie
     sim_scores = list(enumerate(cosine_sim[idx]))
-
-    # Sort the movies based on the similarity scores
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-    # Get the scores of the 10 most similar movies
     sim_scores = sim_scores[1:11]
-
-    # Get the movie indices
     movie_indices = [i[0] for i in sim_scores]
-
-    # Return the top 10 most similar movies
     return df2_cleaned['title'].iloc[movie_indices].tolist()
 
 def fetch_movie_details(title):
@@ -53,56 +39,84 @@ def fetch_movie_details(title):
     response = requests.get(url)
     return response.json()
 
-@app.route('/')
-def index():
-    top_movies = q_movies['title'].tolist()
-    top_movies_details = [fetch_movie_details(title) for title in top_movies]
-    return render_template('index.html', top_movies=top_movies_details)
+def create_movie_card(movie_details):
+    if movie_details['Response'] == 'True':
+        card = f"""
+        <div class="movie-card">
+            <img src="{movie_details['Poster']}" alt="{movie_details['Title']} poster">
+            <p style = "text-align: center; font-size: 20px; font-weight: bolder">{movie_details['Title']}</p>
+            <p style = "text-align: left;">{movie_details['Plot']}</p>
+            <p><strong>IMDB Rating:</strong> {movie_details['imdbRating']}</p>
+        </div>
+        """
+        return card
+    return ""
 
-@app.route('/recommend', methods=['GET'])
-def recommend():
-    movie_title = request.args.get('movie')
-    filter_type = request.args.get('filter_type')
+# Custom CSS styles
+movie_card_css = """
+<style>
+    .movie-card {
+        display: inline-block;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 15px;
+        text-align: center;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        width: 320px;
+        height: 400px;
+        overflow:auto;
+    }
+    .movie-card:hover {
+        transform: scale(1.05);
+    }
+    .movie-card img {
+        max-width: 50%;
+        height: auto;
+        border-radius: 5px;
+    }
+</style>
+"""
 
-    if not movie_title or not filter_type:
-        return jsonify({"error": "Missing movie title or filter type"}), 400
+# Streamlit App
+st.title("Movie Media")
 
-    try:
-        # Ensure the movie title exists in your dataset
-        if movie_title not in df2_cleaned['title'].values:
-            return jsonify({"error": "Movie not found in dataset"}), 404
+# Inject custom CSS styles
+st.markdown(movie_card_css, unsafe_allow_html=True)
 
-        # Get the index of the movie from the title
-        idx = df2_cleaned[df2_cleaned['title'] == movie_title].index[0]
+menu = ["Trending", "Search"]
+choice = st.sidebar.selectbox("Menu", menu)
 
-        # Use the appropriate similarity matrix based on the filter type
-        if filter_type == 'plot':
-            sim_scores = list(enumerate(cosine_sim[idx]))
-        elif filter_type == 'actors_directors':
-            sim_scores = list(enumerate(cosine_sim2[idx]))
+if choice == "Trending":
+    st.subheader("Top 15 Movies")
+    movie_cards = ""
+    for index, row in q_movies.iterrows():
+        movie_details = fetch_movie_details(row['title'])
+        movie_cards += create_movie_card(movie_details)
+    st.markdown(movie_cards, unsafe_allow_html=True)
+
+elif choice == "Search":
+    st.subheader("Search Movie Recommendations")
+    movie_name = st.text_input("Enter movie name")
+    filter_type = st.radio("Filter Type", ("plot", "actors_directors"))
+
+    if st.button("Search"):
+        if movie_name:
+            if filter_type == "plot":
+                recommendations = get_recommendations(movie_name, cosine_sim)
+            else:
+                recommendations = get_recommendations(movie_name, cosine_sim2)
+            
+            if recommendations == []:
+                st.markdown("Not available in our database")
+            else:
+                st.subheader("Recommended Movies:")
+                movie_cards = ""
+                for title in recommendations:
+                    movie_details = fetch_movie_details(title)
+                    movie_cards += create_movie_card(movie_details)
+                st.markdown(movie_cards, unsafe_allow_html=True)
         else:
-            return jsonify({"error": "Invalid filter type"}), 400
-
-        # Sort movies based on similarity scores
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        sim_scores = sim_scores[1:16]  # Get top 15 similar movies
-
-        recommendations = []
-        for i, score in sim_scores:
-            movie = df2_cleaned.iloc[i]
-            # Fetch additional movie details from OMDB
-            response = requests.get(f"http://www.omdbapi.com/?t={movie['title']}&apikey={OMDB_API_KEY}")
-            movie_data = response.json()
-            if movie_data['Response'] == 'True':
-                recommendations.append({
-                    'Title': movie_data['Title'],
-                    'Poster': movie_data['Poster'],
-                    'Plot': movie_data['Plot'],
-                    'imdbRating': movie_data['imdbRating']
-                })
-
-        return jsonify({"recommendations": recommendations})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-if __name__ == '__main__':
-    app.run(debug=True)
+            st.error("Please enter a movie name.")

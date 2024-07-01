@@ -63,7 +63,7 @@ The recommendation system consists of two main components:
 
 ### Deployment Process:
 1. **Environment**:
-   - Flask application deployed on a web server.
+   - Streamlit application deployed on a web server.
 2. **APIs/Endpoints**:
    - `/recommend`: Endpoint to get movie recommendations based on user input.
 3. **Testing**:
@@ -77,7 +77,7 @@ The movie recommendation system provides accurate and relevant suggestions based
 
 - TMDB Movie Metadata: [Dataset Link](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata/data)
 - Scikit-learn Documentation
-- Flask Documentation
+- Streamlit Documentation
 - [Getting Started with a Movie Recommendation System - IBTESAM AHMED](https://www.kaggle.com/code/ibtesama/getting-started-with-a-movie-recommendation-system)
 
 ## Appendix
@@ -89,7 +89,7 @@ The movie recommendation system provides accurate and relevant suggestions based
 ### Dependencies:
 
 - Python 3.8+
-- Flask
+- Streamlit
 - Pandas
 - Numpy
 - Scikit-learn
@@ -99,7 +99,7 @@ The movie recommendation system provides accurate and relevant suggestions based
 ### Installation:
 
 ```bash
-pip install flask pandas numpy scikit-learn joblib requests
+pip install streamlit pandas numpy scikit-learn joblib requests
 ```
 
 ### How to Run:
@@ -128,9 +128,9 @@ pip install flask pandas numpy scikit-learn joblib requests
 
 5. **Run the Flask app**:
    ```bash
-   python app.py
+   streamlit run app.py
    ```
 6. **Access the application**:
-   Open your browser and navigate to `http://127.0.0.1:5000/`.
+   Open your browser and navigate to `http://192.168.29.239:8501/`.
 
 By following these steps, you can set up and run the movie recommendation system locally. Enjoy exploring and finding new movies to watch!
