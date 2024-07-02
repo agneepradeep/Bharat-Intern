@@ -1,7 +1,7 @@
 import streamlit as st
 import joblib
 import requests
-
+import pandas as pd
 
 # Load environment variables
 OMDB_API_KEY = st.secrets["API_Key"]
