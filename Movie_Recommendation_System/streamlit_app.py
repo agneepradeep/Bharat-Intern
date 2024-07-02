@@ -2,12 +2,9 @@ import streamlit as st
 import pandas as pd
 import joblib
 import requests
-from dotenv import load_dotenv
-import os
 
 # Load environment variables
-load_dotenv()
-OMDB_API_KEY = os.getenv('API_Key')
+OMDB_API_KEY = st.secrets('API_Key')
 
 # Load the models and data
 cosine_sim = joblib.load('models/cosine_similarity_matrix_tfidf.joblib')
