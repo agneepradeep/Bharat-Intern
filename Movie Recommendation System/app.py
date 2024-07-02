@@ -10,8 +10,8 @@ load_dotenv()
 app = Flask(__name__)
 
 # Load the models and data
-cosine_sim = joblib.load('models/cosine_similarity_matrix_tfidf.joblib')
-cosine_sim2 = joblib.load('models/cosine_similarity_matrix_count.joblib')
+cosine_sim = joblib.load('models/cosine_similarity_matrix_tfidf_compressed.joblib')
+cosine_sim2 = joblib.load('models/cosine_similarity_matrix_count_compressed.joblib')
 df2_cleaned = pd.read_csv('data/transformed_df2.csv')
 q_movies = pd.read_csv('data/top_movies.csv')
 
