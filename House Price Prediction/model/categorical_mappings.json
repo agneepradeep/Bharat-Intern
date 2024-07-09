@@ -1,0 +1,28 @@
+{
+    "ExternQual": {
+        "Excellent": 5,
+        "Good": 4,
+        "Average/Typical": 3,
+        "Fair": 2,
+        "Poor": 1
+    },
+    "OverallQual": {
+        "Very Excellent": 10,
+        "Excellent": 9,
+        "Very Good": 8,
+        "Good": 7,
+        "Above Average": 6,
+        "Average": 5,
+        "Below Average": 4,
+        "Fair": 3,
+        "Poor": 2,
+        "Very Poor": 1
+    },
+    "KitchenQual": {
+        "Excellent": 5,
+        "Good": 4,
+        "Typical/Average": 3,
+        "Fair": 2,
+        "Poor": 1
+    }
+}
