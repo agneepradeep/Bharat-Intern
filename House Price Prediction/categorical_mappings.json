@@ -1,38 +1,28 @@
 {
-    "qual_mapping": {
-        "Ex": 5,
-        "Gd": 4,
-        "TA": 3,
-        "Fa": 2,
-        "Po": 1
+    "ExternQual": {
+        "Excellent": 5,
+        "Good": 4,
+        "Average/Typical": 3,
+        "Fair": 2,
+        "Poor": 1
     },
-    "cond_mapping": {
-        "Ex": 5,
-        "Gd": 4,
-        "TA": 3,
-        "Fa": 2,
-        "Po": 1,
-        "NA": 0
+    "OverallQual": {
+        "Very Excellent": 10,
+        "Excellent": 9,
+        "Very Good": 8,
+        "Good": 7,
+        "Above Average": 6,
+        "Average": 5,
+        "Below Average": 4,
+        "Fair": 3,
+        "Poor": 2,
+        "Very Poor": 1
     },
-    "fence_mapping": {
-        "GdPrv": 4,
-        "MnPrv": 3,
-        "GdWo": 2,
-        "MnWw": 1,
-        "NA": 0
-    },
-    "bsmt_cond_mapping": {
-        "Ex": 5,
-        "Gd": 4,
-        "TA": 3,
-        "Fa": 2,
-        "Po": 1,
-        "NA": 0
-    },
-    "utilities_mapping": {
-        "AllPub": 4,
-        "NoSewr": 3,
-        "NoSeWa": 2,
-        "ELO": 1
+    "KitchenQual": {
+        "Excellent": 5,
+        "Good": 4,
+        "Typical/Average": 3,
+        "Fair": 2,
+        "Poor": 1
     }
 }
