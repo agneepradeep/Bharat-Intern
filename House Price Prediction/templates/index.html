@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 20px;
+            padding: 20px;
+            background-image: url("../static/images/house_background.png");
+            /* Adjust path as necessary */
+            background-repeat: no-repeat;
+            /* Prevents the background image from repeating */
+            background-size: cover;
+            /* Ensures the background image covers the entire body */
+            background-position: center;
+            /* Centers the background image */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type=text],
+        select {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type=submit] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+
+        .prediction {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>House Price Prediction</h1>
+        </header>
+        <main>
+            <form action="/" method="post">
+                <fieldset>
+                    <legend>Enter House Features</legend>
+
+                    <div>
+                        <label for="LotArea">Lot Area:</label>
+                        <input type="text" id="LotArea" name="LotArea" required>
+                    </div>
+
+                    <div>
+                        <label for="OverallQual">Overall Quality:</label>
+                        <select id="OverallQual" name="OverallQual">
+                            {% for key, value in categories['OverallQual'].items() %}
+                            <option value="{{ value }}">{{ key }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="age_of_house">Age of House:</label>
+                        <input type="text" id="age_of_house" name="age_of_house" required>
+                    </div>
+
+                    <div>
+                        <label for="ExterQual">External Quality:</label>
+                        <select id="ExterQual" name="ExterQual">
+                            {% for key, value in categories['ExternQual'].items() %}
+                            <option value="{{ value }}">{{ key }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="1stFlrSF">First Floor Area (sq ft):</label>
+                        <input type="text" id="1stFlrSF" name="1stFlrSF" required>
+                    </div>
+
+                    <div>
+                        <label for="GarageCars">Number of Cars in Garage:</label>
+                        <input type="text" id="GarageCars" name="GarageCars" required>
+                    </div>
+
+                    <div>
+                        <label for="TotRmsAbvGrd">Total Rooms Above Ground:</label>
+                        <input type="text" id="TotRmsAbvGrd" name="TotRmsAbvGrd" required>
+                    </div>
+
+                    <div>
+                        <label for="KitchenQual">Kitchen Quality:</label>
+                        <select id="KitchenQual" name="KitchenQual">
+                            {% for key, value in categories['KitchenQual'].items() %}
+                            <option value="{{ value }}">{{ key }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <input type="submit" value="Predict">
+                </fieldset>
+            </form>
+
+            {% if prediction_text %}
+            <div class="prediction">
+                <h2>{{ prediction_text }}</h2>
+            </div>
+            {% endif %}
+        </main>
+        <hr>
+        <footer>
+            <p>&copy; 2024 House Price Prediction</p>
+        </footer>
+    </div>
+</body>
+
+</html>
