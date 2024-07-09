@@ -1,6 +1,6 @@
-flask
-joblib
-scikit-learn
-pandas
-numpy
-request
+Flask==2.1.2
+pandas==1.4.2
+numpy==1.21.6
+scikit-learn==1.0.2
+joblib==1.1.0
+requests==2.27.1
